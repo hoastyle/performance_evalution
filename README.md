@@ -70,13 +70,55 @@
 
 ## 🚀 快速开始
 
-### 最简单的使用方式
+### 环境要求
+- Python 3.8+
+- 推荐：uv (现代 Python 包管理器)
+
+### 方式一：使用 uv 环境 (推荐)
 ```bash
-# 1. 将数据文件放入 data/ 目录
-# 2. 直接运行（自动查找 data/ 目录）
+# 1. 安装 uv (如果尚未安装)
+curl -LsSf https://astral.sh/uv/install.sh | sh
+
+# 2. 创建虚拟环境
+uv venv
+
+# 3. 激活虚拟环境
+source .venv/bin/activate  # Linux/Mac
+# 或
+.venv\Scripts\activate     # Windows
+
+# 4. 安装依赖
+uv pip install -e .
+
+# 5. 运行评分系统
+python3 scoring.py
+```
+
+### 方式二：使用 pip 环境
+```bash
+# 1. 创建虚拟环境
+python3 -m venv .venv
+source .venv/bin/activate  # Linux/Mac
+# 或
+.venv\Scripts\activate     # Windows
+
+# 2. 安装依赖
+pip install pandas numpy
+
+# 3. 运行评分系统
+python3 scoring.py
+```
+
+### 方式三：直接运行 (无虚拟环境)
+```bash
+# 1. 确保系统已安装 pandas 和 numpy
+pip install pandas numpy
+
+# 2. 将数据文件放入 data/ 目录
+# 3. 直接运行（自动查找 data/ 目录）
 python3 scoring.py
 
-# 3. 查看帮助信息
+# 4. 查看帮助信息
 python3 scoring.py --help
 ```
 
