@@ -5,17 +5,17 @@ repos:
         name: Auto-Fix Trailing Whitespace
         entry: bash -c 'for file in "$@"; do sed -i "s/[[:space:]]*$//" "$file"; done'
         language: system
-        files: \.(md|py|js|ts|json|yaml|yml)$
+        files: \.(md|py|js|ts|json|yaml|yml|html)$
         pass_filenames: true
       - id: trailing-whitespace-check
         name: Verify No Trailing Whitespace
         entry: bash -c 'grep -n "[[:space:]]$" "$@" && exit 1 || exit 0'
         language: system
-        files: \.(md|py|js|ts|json|yaml|yml)$
+        files: \.(md|py|js|ts|json|yaml|yml|html)$
         pass_filenames: true
       - id: file-format
         name: Check File Format
         entry: bash -c 'file "$@" | grep -v "UTF-8 Unicode text" | grep -v "ASCII text" && exit 1 || exit 0'
         language: system
-        files: \.(md|py)$
+        files: \.(md|py|html)$
         pass_filenames: true

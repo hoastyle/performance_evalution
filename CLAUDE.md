@@ -2,6 +2,8 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+请使用中文和用户交互。
+
 ## Repository Overview
 
 This is a Python-based performance evaluation system for development teams, designed to analyze team member performance across three key metrics: overdue ratios, overdue days, and work days. The system processes structured data files and generates comprehensive scoring reports with detailed analysis.

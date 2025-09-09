@@ -173,7 +173,7 @@
         .results-table tr:hover {
             background: #f8f9fa;
         }
-        
+
         /* Column-specific width classes */
         .col-rank { width: 60px; min-width: 60px; }
         .col-name { width: 120px; min-width: 120px; }
@@ -183,7 +183,7 @@
         .col-score { width: 90px; min-width: 90px; }
         .col-grade { width: 80px; min-width: 80px; }
         .col-explanation { min-width: 500px; width: auto; }
-        
+
         .results-table-container {
             overflow-x: auto;
             margin-bottom: 30px;
@@ -252,13 +252,18 @@
             border-radius: 5px;
             background: #f8f9fa;
             font-size: 0.9em;
-            white-space: normal;
-            overflow: visible;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
             line-height: 1.4;
         }
-        
+
         .explanation-column:hover {
             background: #e9ecef;
+            white-space: normal;
+            overflow: visible;
+            position: relative;
+            z-index: 1;
         }
 
         .error-message {
@@ -300,34 +305,34 @@
             100% { transform: rotate(360deg); }
         }
 
-        @media (max-width: 768px) {
+        @media (max-width: 1024px) {
             .container {
                 margin: 10px;
                 border-radius: 10px;
             }
-            
+
             .header {
                 padding: 20px;
             }
-            
+
             .header h1 {
                 font-size: 2em;
             }
-            
+
             .upload-section,
             .results-section {
                 padding: 20px;
             }
-            
+
             .results-table {
                 font-size: 0.8em;
             }
-            
+
             .results-table th,
             .results-table td {
                 padding: 6px 4px;
             }
-            
+
             .col-name,
             .col-overdue-ratio,
             .col-overdue-days,
@@ -336,22 +341,75 @@
             .col-grade {
                 min-width: 80px;
             }
-            
+
             .col-explanation {
-                min-width: 350px;
+                min-width: 300px;
             }
-            
+
             .explanation-columns {
                 grid-template-columns: 1fr;
                 gap: 4px;
             }
-            
+
             .explanation-column {
                 padding: 3px 4px;
                 font-size: 0.8em;
-                white-space: normal;
-                overflow: visible;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
                 line-height: 1.3;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 5px;
+                border-radius: 8px;
+            }
+
+            .header {
+                padding: 15px;
+            }
+
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .upload-section,
+            .results-section {
+                padding: 15px;
+            }
+
+            .results-table {
+                font-size: 0.7em;
+            }
+
+            .results-table th,
+            .results-table td {
+                padding: 4px 2px;
+            }
+
+            .col-name,
+            .col-overdue-ratio,
+            .col-overdue-days,
+            .col-work-days,
+            .col-score,
+            .col-grade {
+                min-width: 60px;
+            }
+
+            .col-explanation {
+                min-width: 250px;
+            }
+
+            .explanation-columns {
+                grid-template-columns: 1fr;
+                gap: 3px;
+            }
+
+            .explanation-column {
+                padding: 2px 3px;
+                font-size: 0.7em;
             }
         }
     </style>
@@ -392,7 +450,7 @@
 
             <div class="error-message" id="error-message"></div>
             <div class="success-message" id="success-message"></div>
-            
+
             <div class="loading" id="loading">
                 <div class="spinner"></div>
                 <div>正在处理数据...</div>
@@ -408,7 +466,7 @@
                 <h2>评分结果</h2>
                 <button class="export-btn" onclick="exportToCSV()">导出CSV</button>
             </div>
-            
+
             <div class="results-table-container">
                 <table class="results-table" id="results-table">
                     <thead>
@@ -448,7 +506,7 @@
 
             const box = document.getElementById(type + '-box');
             const info = document.getElementById(type + '-info');
-            
+
             box.classList.add('has-file');
             info.textContent = `已选择: ${file.name}`;
 
@@ -497,9 +555,9 @@
             static parseOverdueData(content) {
                 const data = {};
                 const lines = content.split('\n').filter(line => line.trim());
-                
+
                 console.log('Overdue data lines:', lines.length);
-                
+
                 for (let i = 0; i < lines.length; i += 3) {
                     if (i + 2 < lines.length) {
                         const name = lines[i].trim();
@@ -518,9 +576,9 @@
             static parseMeanOverdueData(content) {
                 const data = {};
                 const lines = content.split('\n').filter(line => line.trim());
-                
+
                 console.log('Mean overdue data lines:', lines.length);
-                
+
                 for (let i = 0; i < lines.length; i += 3) {
                     if (i + 2 < lines.length) {
                         const name = lines[i].trim();
@@ -538,9 +596,9 @@
             static parseDaysData(content) {
                 const data = {};
                 const lines = content.split('\n').filter(line => line.trim());
-                
+
                 console.log('Days data lines:', lines.length);
-                
+
                 for (let i = 0; i < lines.length; i += 5) {
                     if (i + 4 < lines.length) {
                         const name = lines[i].trim();
@@ -569,7 +627,7 @@
                 const meanOverdueNames = new Set(Object.keys(meanOverdueData));
                 const daysNames = new Set(Object.keys(daysData));
 
-                const commonNames = new Set([...overdueNames].filter(name => 
+                const commonNames = new Set([...overdueNames].filter(name =>
                     meanOverdueNames.has(name) && daysNames.has(name)
                 ));
 
@@ -782,7 +840,7 @@
         async function processFiles() {
             const loading = document.getElementById('loading');
             const btn = document.getElementById('process-btn');
-            
+
             loading.style.display = 'block';
             btn.disabled = true;
 
@@ -809,7 +867,7 @@
                 const meanOverdueNames = new Set(Object.keys(meanOverdueData));
                 const daysNames = new Set(Object.keys(daysData));
 
-                const commonNames = Array.from(overdueNames).filter(name => 
+                const commonNames = Array.from(overdueNames).filter(name =>
                     meanOverdueNames.has(name) && daysNames.has(name)
                 );
 
@@ -871,9 +929,9 @@
             // 填充表格
             results.forEach((result, index) => {
                 const row = document.createElement('tr');
-                
+
                 // 创建三列说明
-                const explanationHtml = Array.isArray(result.explanation) 
+                const explanationHtml = Array.isArray(result.explanation)
                     ? `
                         <div class="explanation-columns">
                             <div class="explanation-column">${result.explanation[0] || ''}</div>
@@ -882,7 +940,7 @@
                         </div>
                     `
                     : `<div class="explanation">${result.explanation}</div>`;
-                
+
                 row.innerHTML = `
                     <td class="col-rank">${index + 1}</td>
                     <td class="col-name">${result.name}</td>
@@ -898,7 +956,7 @@
 
             // 计算统计信息
             const stats = calculateStatistics(results);
-            
+
             // 显示统计卡片
             const statCards = [
                 { label: '总人数', value: stats.totalPeople },
@@ -961,7 +1019,7 @@
 
             const results = window.currentResults;
             const headers = ['排名', '姓名', '逾期比例', '逾期天数', '工作人天', '综合得分', '等级', '说明'];
-            
+
             const csvContent = [
                 headers.join(','),
                 ...results.map((result, index) => [
