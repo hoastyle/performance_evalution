@@ -1,0 +1,40 @@
+# 敏感数据文件
+*.data
+*.csv
+*.xlsx
+*.xls
+
+# 数据处理结果
+results/
+output/
+reports/
+
+# 临时文件
+temp/
+tmp/
+
+# 日志文件
+*.log
+
+# 配置文件中的敏感信息
+config.json
+.env
+.env.local
+
+# Python缓存
+__pycache__/
+*.py[cod]
+*$py.class
+
+# IDE文件
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# macOS系统文件
+.DS_Store
+
+# 备份文件
+*.bak
+*.backup
