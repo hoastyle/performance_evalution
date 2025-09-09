@@ -123,6 +123,148 @@
             box-shadow: none;
         }
 
+        /* 文件夹上传样式 */
+        .folder-upload-section {
+            margin: 30px 0;
+            padding: 25px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 12px;
+            border: 2px dashed #6c757d;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .folder-upload-section:hover {
+            border-color: #3498db;
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+        }
+
+        .folder-upload-section.has-folder {
+            border-color: #27ae60;
+            background: linear-gradient(135deg, #e8f5e8 0%, #c8e6c9 100%);
+        }
+
+        .folder-upload-label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            font-size: 1.2em;
+            font-weight: 600;
+            color: #495057;
+            cursor: pointer;
+            margin-bottom: 15px;
+            transition: color 0.3s ease;
+        }
+
+        .folder-upload-section:hover .folder-upload-label {
+            color: #3498db;
+        }
+
+        .folder-upload-section.has-folder .folder-upload-label {
+            color: #27ae60;
+        }
+
+        .folder-upload-input {
+            display: none;
+        }
+
+        .folder-upload-description {
+            font-size: 0.9em;
+            color: #6c757d;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+
+        .folder-upload-section.has-folder .folder-upload-description {
+            color: #155724;
+        }
+
+        .folder-status {
+            display: inline-block;
+            padding: 6px 12px;
+            background: #e9ecef;
+            color: #495057;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 500;
+            margin-top: 10px;
+        }
+
+        .folder-upload-section.has-folder .folder-status {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .quick-upload-separator {
+            display: flex;
+            align-items: center;
+            margin: 30px 0;
+            color: #6c757d;
+        }
+
+        .quick-upload-separator::before,
+        .quick-upload-separator::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: #dee2e6;
+        }
+
+        .quick-upload-separator span {
+            padding: 0 15px;
+            font-size: 0.9em;
+            font-weight: 500;
+        }
+
+        .batch-file-list {
+            margin-top: 15px;
+            text-align: left;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 8px;
+            padding: 15px;
+            display: none;
+        }
+
+        .folder-upload-section.has-folder .batch-file-list {
+            display: block;
+        }
+
+        .batch-file-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #e9ecef;
+            font-size: 0.9em;
+        }
+
+        .batch-file-item:last-child {
+            border-bottom: none;
+        }
+
+        .batch-file-name {
+            font-weight: 500;
+            color: #495057;
+        }
+
+        .batch-file-status {
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.8em;
+            font-weight: 500;
+        }
+
+        .file-status-found {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .file-status-missing {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
         .results-section {
             padding: 40px;
             display: none;
@@ -1245,6 +1387,59 @@
                 font-size: 0.7em;
             }
         }
+
+        /* 警告消息样式 */
+        .warning-message {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 8px;
+            padding: 15px 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            max-width: 400px;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .warning-icon {
+            font-size: 1.2em;
+            flex-shrink: 0;
+        }
+
+        .warning-text {
+            flex: 1;
+            font-size: 0.9em;
+            color: #856404;
+            line-height: 1.4;
+        }
+
+        .warning-close {
+            cursor: pointer;
+            font-size: 1.1em;
+            color: #856404;
+            opacity: 0.7;
+            transition: opacity 0.2s ease;
+        }
+
+        .warning-close:hover {
+            opacity: 1;
+        }
     </style>
 </head>
 <body>
@@ -1287,6 +1482,39 @@
             <div class="loading" id="loading">
                 <div class="spinner"></div>
                 <div>正在处理数据...</div>
+            </div>
+
+            <!-- 快捷上传：文件夹上传 -->
+            <div class="quick-upload-separator">
+                <span>或者</span>
+            </div>
+
+            <div class="folder-upload-section" id="folder-upload">
+                <label for="folder-input" class="folder-upload-label">
+                    <span>📁</span>
+                    <span>快捷上传：选择文件夹</span>
+                </label>
+                <input type="file" id="folder-input" class="folder-upload-input" webkitdirectory directory multiple onchange="handleFolderUpload(this)">
+                <div class="folder-upload-description">
+                    系统将自动查找并解析默认文件：<br>
+                    <strong>overdue.data</strong>（逾期比例）、<strong>mean_overdue.data</strong>（逾期天数）、<strong>days.data</strong>（工作人天）
+                </div>
+                <div class="folder-status" id="folder-status">点击选择包含数据文件的文件夹</div>
+
+                <div class="batch-file-list" id="batch-file-list">
+                    <div class="batch-file-item">
+                        <span class="batch-file-name">overdue.data</span>
+                        <span class="batch-file-status file-status-missing" id="file-status-overdue">未找到</span>
+                    </div>
+                    <div class="batch-file-item">
+                        <span class="batch-file-name">mean_overdue.data</span>
+                        <span class="batch-file-status file-status-missing" id="file-status-mean-overdue">未找到</span>
+                    </div>
+                    <div class="batch-file-item">
+                        <span class="batch-file-name">days.data</span>
+                        <span class="batch-file-status file-status-missing" id="file-status-days">未找到</span>
+                    </div>
+                </div>
             </div>
 
             <button class="process-btn" id="process-btn" onclick="processFiles()" disabled>
@@ -1501,6 +1729,115 @@
                 checkAllFilesLoaded();
             };
             reader.readAsText(file, 'UTF-8');
+        }
+
+        // 文件夹上传处理
+        async function handleFolderUpload(input) {
+            const files = Array.from(input.files);
+            const folderSection = document.getElementById('folder-upload');
+            const folderStatus = document.getElementById('folder-status');
+
+            if (files.length === 0) {
+                showError('未选择文件夹或文件夹为空');
+                return;
+            }
+
+            folderStatus.textContent = '正在扫描文件夹...';
+
+            // 重置文件状态
+            const defaultFiles = {
+                'overdue.data': false,
+                'mean_overdue.data': false,
+                'days.data': false
+            };
+
+            // 扫描文件
+            for (const file of files) {
+                if (defaultFiles.hasOwnProperty(file.name)) {
+                    defaultFiles[file.name] = file;
+                    console.log(`Found default file: ${file.name}`);
+                }
+            }
+
+            // 更新UI状态
+            let foundFiles = 0;
+            for (const [fileName, fileObj] of Object.entries(defaultFiles)) {
+                const statusElement = document.getElementById(`file-status-${fileName.replace('.data', '').replace('_overdue', '-overdue')}`);
+
+                if (fileObj !== false) {
+                    statusElement.textContent = '已找到';
+                    statusElement.className = 'batch-file-status file-status-found';
+                    foundFiles++;
+                } else {
+                    statusElement.textContent = '未找到';
+                    statusElement.className = 'batch-file-status file-status-missing';
+                }
+            }
+
+            // 如果找到所有文件，自动加载
+            if (foundFiles === 3) {
+                folderSection.classList.add('has-folder');
+                folderStatus.textContent = '✅ 找到所有默认文件，正在自动加载...';
+
+                // 清除之前的文件数据
+                fileData.overdue = null;
+                fileData.meanOverdue = null;
+                fileData.days = null;
+
+                // 读取文件内容
+                try {
+                    await loadFileContent(defaultFiles['overdue.data'], 'overdue');
+                    await loadFileContent(defaultFiles['mean_overdue.data'], 'mean-overdue');
+                    await loadFileContent(defaultFiles['days.data'], 'days');
+
+                    folderStatus.textContent = '✅ 所有文件加载完成！';
+                    showSuccess('文件夹上传成功：已自动加载3个数据文件');
+
+                } catch (error) {
+                    showError('文件加载失败：' + error.message);
+                    folderSection.classList.remove('has-folder');
+                    folderStatus.textContent = '❌ 文件加载失败';
+                }
+            } else {
+                folderSection.classList.add('has-folder');
+                folderStatus.textContent = `⚠️ 找到 ${foundFiles}/3 个文件，请手动上传缺失文件`;
+                showWarning(`文件夹扫描完成：找到 ${foundFiles}/3 个默认文件`);
+            }
+        }
+
+        // 显示警告信息
+        function showWarning(message) {
+            const warningDiv = document.createElement('div');
+            warningDiv.className = 'warning-message';
+            warningDiv.innerHTML = `
+                <div class="warning-icon">⚠️</div>
+                <div class="warning-text">${message}</div>
+                <div class="warning-close" onclick="this.parentElement.remove()">✕</div>
+            `;
+            document.body.appendChild(warningDiv);
+
+            // 5秒后自动消失
+            setTimeout(() => {
+                if (warningDiv.parentElement) {
+                    warningDiv.remove();
+                }
+            }, 5000);
+        }
+
+        // 加载文件内容的辅助函数
+        function loadFileContent(file, type) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    fileData[type === 'mean-overdue' ? 'meanOverdue' : type] = e.target.result;
+                    checkAllFilesLoaded();
+                    resolve();
+                };
+                reader.onerror = function() {
+                    reject(new Error(`读取文件 ${file.name} 失败`));
+                };
+                reader.readAsText(file, 'UTF-8');
+            });
         }
 
         // 检查所有文件是否已加载
