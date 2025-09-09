@@ -198,16 +198,26 @@ class ScoringCalculator:
         return max(params["min_score"], min(params["max_score"], score))
 
     def calculate_overdue_days_score(self, days: float) -> float:
-        """计算逾期天数得分"""
+        """计算逾期天数得分 - v2.3.1修复版（避免零分）"""
         params = self.config.overdue_days_params
-        score = params["max_score"] - max(0, days - params["baseline"]) * params["multiplier"]
-        return max(params["min_score"], score)
+        baseline = params["baseline"]  # 2.0天
+
+        if days <= baseline:
+            # 不超过基准线：满分
+            return params["max_score"]
+
+        # 超过基准线：使用递减函数，避免到达0分
+        # 使用公式: 100 * (baseline + buffer) / (days + buffer)
+        # buffer确保高逾期天数仍有非零分数
+        buffer = 2.0  # 缓冲参数，确保极值情况下不为0
+        score = params["max_score"] * (baseline + buffer) / (days + buffer)
+        return max(params["min_score"], round(score, 2))
 
     def calculate_progressive_penalty(self, days: float, standard_days: float, base_penalty_rate: float, multiplier: float) -> float:
         """计算递增惩罚：距离标准越远，惩罚越重"""
         if days >= standard_days:
             return 0  # 达到或超过标准，无惩罚
-        
+
         gap = standard_days - days  # 与标准的差距
         # 递增惩罚公式：base_penalty * (1 + multiplier)^(gap-1) * gap
         penalty_factor = base_penalty_rate * (multiplier ** (gap - 1))
@@ -222,9 +232,9 @@ class ScoringCalculator:
         if days < standard_days:
             # 低于标准：使用递增惩罚算法
             penalty = self.calculate_progressive_penalty(
-                days, 
-                standard_days, 
-                params["base_penalty_rate"], 
+                days,
+                standard_days,
+                params["base_penalty_rate"],
                 params["progressive_multiplier"]
             )
             score = 100 - penalty
