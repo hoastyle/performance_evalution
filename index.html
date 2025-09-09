@@ -19,7 +19,7 @@
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
             background: white;
             border-radius: 15px;
@@ -152,11 +152,9 @@
         .results-table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 30px;
             background: white;
             border-radius: 10px;
             overflow: hidden;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
 
         .results-table th,
@@ -174,6 +172,23 @@
 
         .results-table tr:hover {
             background: #f8f9fa;
+        }
+        
+        /* Column-specific width classes */
+        .col-rank { width: 60px; min-width: 60px; }
+        .col-name { width: 120px; min-width: 120px; }
+        .col-overdue-ratio { width: 110px; min-width: 110px; }
+        .col-overdue-days { width: 110px; min-width: 110px; }
+        .col-work-days { width: 110px; min-width: 110px; }
+        .col-score { width: 90px; min-width: 90px; }
+        .col-grade { width: 80px; min-width: 80px; }
+        .col-explanation { min-width: 500px; width: auto; }
+        
+        .results-table-container {
+            overflow-x: auto;
+            margin-bottom: 30px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
 
         .grade {
@@ -221,8 +236,29 @@
         .explanation {
             font-size: 0.9em;
             color: #666;
-            max-width: 300px;
             line-height: 1.4;
+        }
+
+        .explanation-columns {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+            text-align: left;
+            line-height: 1.3;
+        }
+
+        .explanation-column {
+            padding: 6px 8px;
+            border-radius: 5px;
+            background: #f8f9fa;
+            font-size: 0.9em;
+            white-space: normal;
+            overflow: visible;
+            line-height: 1.4;
+        }
+        
+        .explanation-column:hover {
+            background: #e9ecef;
         }
 
         .error-message {
@@ -284,12 +320,38 @@
             }
             
             .results-table {
-                font-size: 0.9em;
+                font-size: 0.8em;
             }
             
             .results-table th,
             .results-table td {
-                padding: 8px;
+                padding: 6px 4px;
+            }
+            
+            .col-name,
+            .col-overdue-ratio,
+            .col-overdue-days,
+            .col-work-days,
+            .col-score,
+            .col-grade {
+                min-width: 80px;
+            }
+            
+            .col-explanation {
+                min-width: 350px;
+            }
+            
+            .explanation-columns {
+                grid-template-columns: 1fr;
+                gap: 4px;
+            }
+            
+            .explanation-column {
+                padding: 3px 4px;
+                font-size: 0.8em;
+                white-space: normal;
+                overflow: visible;
+                line-height: 1.3;
             }
         }
     </style>
@@ -351,14 +413,14 @@
                 <table class="results-table" id="results-table">
                     <thead>
                         <tr>
-                            <th>排名</th>
-                            <th>姓名</th>
-                            <th>逾期比例</th>
-                            <th>逾期天数</th>
-                            <th>工作人天</th>
-                            <th>综合得分</th>
-                            <th>等级</th>
-                            <th>说明</th>
+                            <th class="col-rank">排名</th>
+                            <th class="col-name">姓名</th>
+                            <th class="col-overdue-ratio">逾期比例</th>
+                            <th class="col-overdue-days">逾期天数</th>
+                            <th class="col-work-days">工作人天</th>
+                            <th class="col-score">综合得分</th>
+                            <th class="col-grade">等级</th>
+                            <th class="col-explanation">说明</th>
                         </tr>
                     </thead>
                     <tbody id="results-tbody">
@@ -708,7 +770,7 @@
                     }
                 }
 
-                return explanation.join(" | ");
+                return explanation;
             }
 
             needsReview(workDays) {
@@ -809,15 +871,27 @@
             // 填充表格
             results.forEach((result, index) => {
                 const row = document.createElement('tr');
+                
+                // 创建三列说明
+                const explanationHtml = Array.isArray(result.explanation) 
+                    ? `
+                        <div class="explanation-columns">
+                            <div class="explanation-column">${result.explanation[0] || ''}</div>
+                            <div class="explanation-column">${result.explanation[1] || ''}</div>
+                            <div class="explanation-column">${result.explanation[2] || ''}</div>
+                        </div>
+                    `
+                    : `<div class="explanation">${result.explanation}</div>`;
+                
                 row.innerHTML = `
-                    <td>${index + 1}</td>
-                    <td>${result.name}</td>
-                    <td>${result.overdue_ratio.toFixed(1)}%</td>
-                    <td>${result.overdue_days.toFixed(1)}天</td>
-                    <td>${result.work_days.toFixed(1)}人天</td>
-                    <td>${result.comprehensive_score}</td>
-                    <td><span class="grade grade-${result.grade}">${result.grade}</span></td>
-                    <td><div class="explanation">${result.explanation}</div></td>
+                    <td class="col-rank">${index + 1}</td>
+                    <td class="col-name">${result.name}</td>
+                    <td class="col-overdue-ratio">${result.overdue_ratio.toFixed(1)}%</td>
+                    <td class="col-overdue-days">${result.overdue_days.toFixed(1)}天</td>
+                    <td class="col-work-days">${result.work_days.toFixed(1)}人天</td>
+                    <td class="col-score">${result.comprehensive_score}</td>
+                    <td class="col-grade"><span class="grade grade-${result.grade}">${result.grade}</span></td>
+                    <td class="col-explanation">${explanationHtml}</td>
                 `;
                 tbody.appendChild(row);
             });
