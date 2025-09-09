@@ -427,16 +427,31 @@ class DataProcessor:
             print("   👏 表彰优秀表现：有多名同事展现出色的工作产出，值得认可")
 
 def main():
+    import os
+    
     parser = argparse.ArgumentParser(description="研发团队数据处理和评分计算器 - 优化版v2.1")
-    parser.add_argument("--overdue", required=True, help="逾期比例数据文件路径")
-    parser.add_argument("--mean-overdue", required=True, help="逾期天数均值数据文件路径")
-    parser.add_argument("--days", required=True, help="工作人天数据文件路径")
+    parser.add_argument("--overdue", help="逾期比例数据文件路径 (默认: data/overdue.data)")
+    parser.add_argument("--mean-overdue", help="逾期天数均值数据文件路径 (默认: data/mean_overdue.data)")
+    parser.add_argument("--days", help="工作人天数据文件路径 (默认: data/days.data)")
     parser.add_argument("--output", help="输出结果文件路径")
     parser.add_argument("--stats", action="store_true", help="显示统计信息")
     parser.add_argument("--detailed", action="store_true", help="显示详细分析报告")
     parser.add_argument("--explain", action="store_true", help="显示每人得分解释")
     
     args = parser.parse_args()
+    
+    # 设置默认数据文件路径
+    data_dir = os.getenv('DATA_DIR', 'data')
+    overdue_file = args.overdue or os.path.join(data_dir, 'overdue.data')
+    mean_overdue_file = args.mean_overdue or os.path.join(data_dir, 'mean_overdue.data')
+    days_file = args.days or os.path.join(data_dir, 'days.data')
+    
+    # 检查数据文件是否存在
+    for file_path, name in [(overdue_file, '逾期比例'), (mean_overdue_file, '逾期天数'), (days_file, '工作人天')]:
+        if not os.path.exists(file_path):
+            print(f"❌ {name}数据文件不存在: {file_path}")
+            print(f"💡 请将数据文件放在 {data_dir}/ 目录下，或使用 --{name.split('_')[0]} 参数指定路径")
+            return
     
     try:
         # 创建数据处理器
@@ -455,7 +470,7 @@ def main():
         print("     - <8人天：减分，每少1人天-10分")
         print()
         
-        result_df = processor.process_files(args.overdue, args.mean_overdue, args.days)
+        result_df = processor.process_files(overdue_file, mean_overdue_file, days_file)
         
         # 显示结果
         print(f"\n=== 评分结果 (共{len(result_df)}人) ===")
