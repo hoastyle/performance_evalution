@@ -1,13 +1,21 @@
 repos:
   - repo: local
     hooks:
-      - id: trailing-whitespace
-        name: Trim Trailing Whitespace
-        entry: bash -c 'grep -n " $" *.md && exit 1 || exit 0'
+      - id: trailing-whitespace-auto-fix
+        name: Auto-Fix Trailing Whitespace
+        entry: bash -c 'for file in "$@"; do sed -i "s/[[:space:]]*$//" "$file"; done'
         language: system
-        files: \.md$
+        files: \.(md|py|js|ts|json|yaml|yml)$
+        pass_filenames: true
+      - id: trailing-whitespace-check
+        name: Verify No Trailing Whitespace
+        entry: bash -c 'grep -n "[[:space:]]$" "$@" && exit 1 || exit 0'
+        language: system
+        files: \.(md|py|js|ts|json|yaml|yml)$
+        pass_filenames: true
       - id: file-format
         name: Check File Format
-        entry: bash -c 'file *.md | grep -v "UTF-8 Unicode text" | grep -v "ASCII text" && exit 1 || exit 0'
+        entry: bash -c 'file "$@" | grep -v "UTF-8 Unicode text" | grep -v "ASCII text" && exit 1 || exit 0'
         language: system
-        files: \.md$
+        files: \.(md|py)$
+        pass_filenames: true
