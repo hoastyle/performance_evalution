@@ -116,20 +116,22 @@ validate_data	scoring.py	/^    def validate_data(overdue_data: Dict[str, float],
 weights	scoring.py	/^    weights = {$/;"	v	class:ScoringConfig
 work_days_params	scoring.py	/^    work_days_params = {$/;"	v	class:ScoringConfig
 使用方法	README.md	/^## 使用方法$/;"	s	chapter:研发团队效能评分系统
-基本使用	README.md	/^### 基本使用$/;"	S	section:研发团队效能评分系统""使用方法
+使用注意事项	README.md	/^### 使用注意事项$/;"	S	section:研发团队效能评分系统""🔒 数据安全注意事项
+基本使用（推荐）	README.md	/^### 基本使用（推荐）$/;"	S	section:研发团队效能评分系统""使用方法
 基础统计信息	README.md	/^### 基础统计信息$/;"	S	section:研发团队效能评分系统""输出报告内容
 导出结果	README.md	/^### 导出结果$/;"	S	section:研发团队效能评分系统""使用方法
 应用场景	README.md	/^## 应用场景$/;"	s	chapter:研发团队效能评分系统
 技术架构	README.md	/^## 技术架构$/;"	s	chapter:研发团队效能评分系统
 持续改进	README.md	/^### 持续改进$/;"	S	section:研发团队效能评分系统""应用场景
+指定数据文件路径	README.md	/^### 指定数据文件路径$/;"	S	section:研发团队效能评分系统""使用方法
 改进建议	README.md	/^### 改进建议$/;"	S	section:研发团队效能评分系统""输出报告内容
 数据处理流程	README.md	/^### 数据处理流程$/;"	S	section:研发团队效能评分系统""技术架构
 数据文件格式	README.md	/^## 数据文件格式$/;"	s	chapter:研发团队效能评分系统
 查看评分解释	README.md	/^### 查看评分解释$/;"	S	section:研发团队效能评分系统""使用方法
 核心特性	README.md	/^## 核心特性$/;"	s	chapter:研发团队效能评分系统
 核心组件	README.md	/^### 核心组件$/;"	S	section:研发团队效能评分系统""技术架构
-注意事项	README.md	/^## 注意事项$/;"	s	chapter:研发团队效能评分系统
 版本信息	README.md	/^## 版本信息$/;"	s	chapter:研发团队效能评分系统
+环境变量配置	README.md	/^### 环境变量配置$/;"	S	section:研发团队效能评分系统""使用方法
 研发团队效能评分系统	README.md	/^# 研发团队效能评分系统$/;"	c
 管理决策	README.md	/^### 管理决策$/;"	S	section:研发团队效能评分系统""应用场景
 系统特色	README.md	/^## 系统特色$/;"	s	chapter:研发团队效能评分系统
@@ -138,6 +140,7 @@ work_days_params	scoring.py	/^    work_days_params = {$/;"	v	class:ScoringConfig
 详细分析报告	README.md	/^### 详细分析报告$/;"	S	section:研发团队效能评分系统""使用方法
 输出报告内容	README.md	/^## 输出报告内容$/;"	s	chapter:研发团队效能评分系统
 重点关注对象	README.md	/^### 重点关注对象$/;"	S	section:研发团队效能评分系统""输出报告内容
+重要：敏感数据保护	README.md	/^### 重要：敏感数据保护$/;"	S	section:研发团队效能评分系统""🔒 数据安全注意事项
 项目概述	README.md	/^## 项目概述$/;"	s	chapter:研发团队效能评分系统
 🎯 公平性	README.md	/^### 🎯 公平性$/;"	S	section:研发团队效能评分系统""系统特色
 🎯 多维度评分体系	README.md	/^### 🎯 多维度评分体系$/;"	S	section:研发团队效能评分系统""核心特性
@@ -146,3 +149,4 @@ work_days_params	scoring.py	/^    work_days_params = {$/;"	v	class:ScoringConfig
 📊 全面性	README.md	/^### 📊 全面性$/;"	S	section:研发团队效能评分系统""系统特色
 📊 智能评分算法	README.md	/^### 📊 智能评分算法$/;"	S	section:研发团队效能评分系统""核心特性
 🔍 智能化	README.md	/^### 🔍 智能化$/;"	S	section:研发团队效能评分系统""系统特色
+🔒 数据安全注意事项	README.md	/^## 🔒 数据安全注意事项$/;"	s	chapter:研发团队效能评分系统

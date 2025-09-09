@@ -68,43 +68,70 @@
 ### 4. 综合得分计算
 **公式**: `综合得分 = 逾期比例得分×40% + 逾期天数得分×40% + 工作人天得分×20%`
 
-## 使用方法
+## 🚀 快速开始
 
-### 基本使用（推荐）
+### 最简单的使用方式
 ```bash
-# 创建数据目录并放置数据文件
+# 1. 将数据文件放入 data/ 目录
+# 2. 直接运行（自动查找 data/ 目录）
+python3 scoring.py
+
+# 3. 查看帮助信息
+python3 scoring.py --help
+```
+
+## 📋 完整使用指南
+
+### 基础运行模式
+```bash
+# 默认模式：显示基础评分结果
+python3 scoring.py
+
+# 统计模式：显示统计信息和高低分组
+python3 scoring.py --stats
+
+# 详细模式：显示完整的分析报告
+python3 scoring.py --detailed
+
+# 解释模式：显示每人得分的详细解释
+python3 scoring.py --explain
+```
+
+### 数据文件配置
+```bash
+# 方式1：使用默认 data/ 目录（推荐）
 mkdir data
-# 将 *.data 文件移动到 data/ 目录下
+cp your_data_files.data data/
+python3 scoring.py
 
-# 运行评分系统（自动查找 data/ 目录下的文件）
+# 方式2：指定具体文件路径
+python3 scoring.py --overdue /path/to/overdue.data --mean-overdue /path/to/mean_overdue.data --days /path/to/days.data
+
+# 方式3：使用环境变量
+export DATA_DIR=/secure/data/location
 python3 scoring.py
 ```
 
-### 指定数据文件路径
+### 结果导出功能
 ```bash
-python3 scoring.py --overdue path/to/overdue.data --mean-overdue path/to/mean_overdue.data --days path/to/days.data
+# 导出CSV结果（Excel兼容）
+python3 scoring.py --output results.csv
+
+# 详细分析 + 导出
+python3 scoring.py --detailed --output detailed_report.csv
+
+# 完整信息导出（包含解释）
+python3 scoring.py --explain --output full_report.csv
 ```
 
-### 环境变量配置
+### 高级组合选项
 ```bash
-# 设置数据目录
-export DATA_DIR=/path/to/your/data
-python3 scoring.py
-```
+# 完整分析报告
+python3 scoring.py --detailed --stats --output comprehensive_report.csv
 
-### 详细分析报告
-```bash
-python3 scoring.py --overdue overdue.data --mean-overdue mean_overdue.data --days days.data --detailed
-```
-
-### 导出结果
-```bash
-python3 scoring.py --overdue overdue.data --mean-overdue mean_overdue.data --days days.data --output results.csv
-```
-
-### 查看评分解释
-```bash
-python3 scoring.py --overdue overdue.data --mean-overdue mean_overdue.data --days days.data --explain
+# 仅查看特定功能
+python3 scoring.py --stats --output summary.csv
+python3 scoring.py --explain --head 10  # 仅显示前10名详细解释
 ```
 
 ## 数据文件格式
@@ -187,6 +214,67 @@ python3 scoring.py --overdue overdue.data --mean-overdue mean_overdue.data --day
 - 定量评价与定性分析结合
 - 历史数据追踪与趋势分析
 
+## 🔧 命令行参考
+
+### 完整参数说明
+```bash
+python3 scoring.py [OPTIONS]
+
+可选参数:
+  -h, --help            显示帮助信息并退出
+  --overdue OVERDUE     逾期比例数据文件路径 (默认: data/overdue.data)
+  --mean-overdue MEAN_OVERDUE
+                        逾期天数均值数据文件路径 (默认: data/mean_overdue.data)
+  --days DAYS           工作人天数据文件路径 (默认: data/days.data)
+  --output OUTPUT       输出结果文件路径 (CSV格式)
+  --stats               显示统计信息和高低分组
+  --detailed            显示详细分析报告
+  --explain             显示每人得分解释
+```
+
+### 输出格式说明
+
+#### 默认输出格式
+```
+         name overdue_ratio overdue_days work_days  comprehensive_score grade
+1         石剑锋         18.8%         0.8天    13.0人天               101.20     S
+2         赵昆朋          0.0%         0.0天    12.0人天               100.80     S
+```
+
+#### 详细解释格式
+```
+✅ 逾期比例18.8%表现良好 | ✅ 逾期天数0.8天控制良好 | 💪 工作量13.0人天优秀
+⚠️ 逾期比例40.0%超出基准(20%) | ⚠️ 逾期天数2.7天超出基准(2天) | 💪 工作量11.0人天优秀
+```
+
+#### 统计信息格式
+```
+=== 统计信息 ===
+总人数: 36
+平均得分: 53.84
+得分中位数: 50.57
+分数区间: 10.0 - 101.2
+
+等级分布:
+  S级: 5人 (13.9%)
+  A级: 7人 (19.4%)
+  B级: 4人 (11.1%)
+  C级: 5人 (13.9%)
+  D级: 15人 (41.7%)
+
+Highlight候选 (S级): XXX
+Lowlight需关注 (D级): YYY
+需核实人天记录: ZZZ
+```
+
+### 智能提示说明
+- ✅ **表现良好**: 指标在正常范围内
+- ⚠️ **超出基准**: 指标超过标准值，需要关注
+- 📉 **工作量不足**: 工作人天低于8天
+- ✅ **理想区间**: 工作人天在8-10天范围内
+- 💪 **优秀表现**: 工作人天在10-15天范围内
+- 🔥 **超高人天**: 工作人天超过15天，需要核实记录
+
 ## 技术架构
 
 ### 核心组件
@@ -219,43 +307,85 @@ python3 scoring.py --overdue overdue.data --mean-overdue mean_overdue.data --day
 - 评估管理措施效果
 - 建立数据驱动的改进文化
 
-## 🔒 数据安全注意事项
+## 🔒 数据安全与最佳实践
 
-### 重要：敏感数据保护
-**⚠️ 警告：本系统处理的员工绩效数据属于敏感信息，必须严格保护！**
+### ⚠️ 重要：敏感数据保护
+**警告：本系统处理的员工绩效数据属于敏感信息，必须严格保护！**
 
-1. **数据文件安全**：
-   - 所有 `.data` 文件已被 `.gitignore` 忽略，不会被提交到版本控制
-   - 建议将真实数据文件存储在项目外部的安全位置
-   - 不要在任何公共代码仓库或云存储中上传包含真实姓名的数据
+#### 数据文件安全
+- ✅ **自动保护**: 所有 `.data` 文件已被 `.gitignore` 忽略，不会被提交到版本控制
+- 🔒 **安全存储**: 建议将真实数据文件存储在项目外部的安全位置
+- 🚫 **禁止上传**: 不要在任何公共代码仓库或云存储中上传包含真实姓名的数据
 
-2. **推荐的数据存储方案**：
-   ```bash
-   # 方案1：本地data目录（已自动被git忽略）
-   mkdir data
-   cp 你的数据文件 data/
+#### 推荐的数据存储方案
+```bash
+# 方案1：本地data目录（已自动被git忽略）
+mkdir data
+cp your_data_files.data data/
+python3 scoring.py
 
-   # 方案2：外部安全存储
-   /secure/hr-data/  # 受保护的HR数据目录
-   /encrypted/       # 加密存储位置
-   ```
+# 方案2：外部安全存储
+export DATA_DIR=/secure/hr-data
+python3 scoring.py
 
-3. **数据处理安全**：
-   - 不要在日志或输出中保留敏感信息
-   - 处理完成后及时删除临时文件
-   - 定期审查数据访问权限
+# 方案3：加密存储（高级安全）
+gpg --encrypt --recipient 'your-key' sensitive_data.data
+gpg --decrypt sensitive_data.data.gpg > temp.data
+python3 scoring.py --overdue temp.data
+rm temp.data
+```
 
-4. **版本控制安全**：
-   - 系统代码可以正常提交和分享
-   - 数据文件永远不会被意外提交
-   - 建议定期检查 `.gitignore` 规则
+#### 数据处理安全最佳实践
+- 🛡️ **访问控制**: 限制数据文件的访问权限
+- 🧹 **及时清理**: 处理完成后删除临时文件
+- 📋 **审计日志**: 记录数据访问和处理情况
+- 🔐 **加密传输**: 如需网络传输，使用加密方式
 
-### 使用注意事项
+#### 版本控制安全
+- ✅ **代码安全**: 系统代码可以正常提交和分享
+- 🚫 **数据隔离**: 数据文件永远不会被意外提交
+- 🔍 **定期检查**: 建议定期检查 `.gitignore` 规则
+- 📝 **历史清理**: 如意外提交敏感数据，使用 `git filter-branch` 清理
 
-1. **数据质量**: 确保输入数据准确完整，系统会自动验证数据合理性
-2. **记录核实**: 对于超高人天记录(>15人天)，建议核实统计准确性
-3. **综合判断**: 评分结果作为参考，建议结合具体工作内容和质量综合评估
-4. **持续优化**: 可根据团队特点调整评分参数，系统支持灵活配置
+## 💡 使用建议与注意事项
+
+### 数据准备建议
+1. **数据格式一致性**: 确保三个数据文件中的员工姓名完全一致
+2. **数据质量验证**: 系统会自动验证数据合理性，但建议事先检查
+3. **备份重要数据**: 处理前备份原始数据文件
+4. **匿名化处理**: 如需分享结果，考虑对员工姓名进行匿名化处理
+
+### 结果解读指南
+- **S级员工 (≥85分)**: Highlight候选，表现卓越，值得表彰和提拔
+- **A级员工 (≥70分)**: 优秀表现，团队骨干力量
+- **B级员工 (≥55分)**: 良好表现，稳定贡献者
+- **C级员工 (≥40分)**: 基本达标，需要关注和指导
+- **D级员工 (<40分)**: 需要重点关注，制定改进计划
+
+### 管理应用建议
+1. **绩效面谈**: 使用评分结果作为绩效面谈的客观依据
+2. **改进计划**: 为D级员工制定具体的改进计划和目标
+3. **资源分配**: 根据工作量和绩效表现，优化任务分配
+4. **团队建设**: 组织S级员工经验分享，帮助团队整体提升
+
+### 系统优化建议
+1. **参数调整**: 可根据团队特点调整 `ScoringConfig` 中的参数
+2. **指标扩展**: 可以添加更多评估指标，如代码质量、团队协作等
+3. **历史追踪**: 定期运行评估，建立个人和团队的绩效趋势
+4. **反馈机制**: 收集用户反馈，持续优化评分算法
+
+### 常见问题解决
+- **数据文件不存在**: 检查文件路径或使用 `--overdue` 参数指定
+- **编码问题**: 确保数据文件使用UTF-8编码
+- **权限问题**: 确保对数据文件有读取权限
+- **内存不足**: 大量数据时考虑分批处理
+
+### 技术支持
+如遇到技术问题或有改进建议，请：
+1. 检查本文档的常见问题部分
+2. 查看代码注释了解详细逻辑
+3. 运行 `python3 scoring.py --help` 查看帮助信息
+4. 联系技术支持团队获取帮助
 
 ## 版本信息
 
