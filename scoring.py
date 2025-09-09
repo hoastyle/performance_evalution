@@ -3,7 +3,7 @@
 """
 研发团队数据处理和评分计算器 - 优化版
 基于业务需求优化的评分方案
-版本：2.1 - 优化工作人天评分逻辑（人天越多越好）
+版本：2.3 - 10人天标准与递增惩罚算法
 """
 
 import pandas as pd
@@ -44,16 +44,16 @@ class ScoringConfig:
         "min_score": 0
     }
 
-    # 工作人天评分参数 - 增强版（人天越多越好）
+    # 工作人天评分参数 - v2.3版本（10人天标准，递增惩罚）
     work_days_params = {
-        "ideal_min": 8,            # 理想最小人天
-        "ideal_max": 10,           # 理想最大人天
+        "standard_days": 10,       # 唯一标准人天（满分标准）
         "bonus_tier1_max": 15,     # 一级加分区间上限
         "bonus_tier1_rate": 2,     # 一级加分：每人天+2分
         "bonus_tier2_rate": 1,     # 二级加分：每人天+1分
         "bonus_tier3_max": 20,     # 三级加分区间上限
         "bonus_tier3_rate": 0.5,   # 三级加分：每人天+0.5分
-        "penalty_rate": 10,        # 人天不足惩罚：每人天-10分
+        "base_penalty_rate": 5,    # 基础惩罚率：每人天-5分
+        "progressive_multiplier": 1.2,  # 递增惩罚倍数
         "max_score": 130,          # 最高分130分（提升）
         "min_score": 20,           # 最低分20分
         "inflation_threshold": 15,  # 人天膨胀提醒阈值
@@ -203,31 +203,49 @@ class ScoringCalculator:
         score = params["max_score"] - max(0, days - params["baseline"]) * params["multiplier"]
         return max(params["min_score"], score)
 
-    def calculate_work_days_score(self, days: float) -> float:
-        """计算工作人天得分 - 增强版（人天越多越好，支持三级加分）"""
-        params = self.config.work_days_params
+    def calculate_progressive_penalty(self, days: float, standard_days: float, base_penalty_rate: float, multiplier: float) -> float:
+        """计算递增惩罚：距离标准越远，惩罚越重"""
+        if days >= standard_days:
+            return 0  # 达到或超过标准，无惩罚
+        
+        gap = standard_days - days  # 与标准的差距
+        # 递增惩罚公式：base_penalty * (1 + multiplier)^(gap-1) * gap
+        penalty_factor = base_penalty_rate * (multiplier ** (gap - 1))
+        total_penalty = penalty_factor * gap
+        return total_penalty
 
-        if days < params["ideal_min"]:
-            # 人天不足：每少1天扣10分
-            score = 100 - (params["ideal_min"] - days) * params["penalty_rate"]
+    def calculate_work_days_score(self, days: float) -> float:
+        """计算工作人天得分 - v2.3版本（10人天标准，递增惩罚）"""
+        params = self.config.work_days_params
+        standard_days = params["standard_days"]  # 10人天
+
+        if days < standard_days:
+            # 低于标准：使用递增惩罚算法
+            penalty = self.calculate_progressive_penalty(
+                days, 
+                standard_days, 
+                params["base_penalty_rate"], 
+                params["progressive_multiplier"]
+            )
+            score = 100 - penalty
             return max(params["min_score"], score)
-        elif params["ideal_min"] <= days <= params["ideal_max"]:
-            # 理想区间：8-10人天满分100分
+        elif days == standard_days:
+            # 正好标准：满分100分
             return 100
-        elif params["ideal_max"] < days <= params["bonus_tier1_max"]:
+        elif standard_days < days <= params["bonus_tier1_max"]:
             # 一级加分区间：10-15人天，每增加1人天加2分
-            bonus_days = days - params["ideal_max"]
+            bonus_days = days - standard_days
             score = 100 + bonus_days * params["bonus_tier1_rate"]
             return min(params["max_score"], score)
         elif params["bonus_tier1_max"] < days <= params["bonus_tier3_max"]:
             # 二级加分区间：15-20人天，每增加1人天加1分
-            tier1_bonus = (params["bonus_tier1_max"] - params["ideal_max"]) * params["bonus_tier1_rate"]
+            tier1_bonus = (params["bonus_tier1_max"] - standard_days) * params["bonus_tier1_rate"]
             tier2_bonus = (days - params["bonus_tier1_max"]) * params["bonus_tier2_rate"]
             score = 100 + tier1_bonus + tier2_bonus
             return min(params["max_score"], score)
         else:
             # 三级加分区间：>20人天，每增加1人天加0.5分
-            tier1_bonus = (params["bonus_tier1_max"] - params["ideal_max"]) * params["bonus_tier1_rate"]
+            tier1_bonus = (params["bonus_tier1_max"] - standard_days) * params["bonus_tier1_rate"]
             tier2_bonus = (params["bonus_tier3_max"] - params["bonus_tier1_max"]) * params["bonus_tier2_rate"]
             tier3_bonus = (days - params["bonus_tier3_max"]) * params["bonus_tier3_rate"]
             score = 100 + tier1_bonus + tier2_bonus + tier3_bonus
@@ -293,12 +311,13 @@ class ScoringCalculator:
         else:
             explanation.append(f"⚠️ 逾期天数{overdue_days:.1f}天超出基准(2天)")
 
-        # 工作量分析 - 新逻辑
-        if work_days < params["ideal_min"]:
-            explanation.append(f"📉 工作量{work_days:.1f}人天不足")
-        elif params["ideal_min"] <= work_days <= params["ideal_max"]:
-            explanation.append(f"✅ 工作量{work_days:.1f}人天理想")
-        elif params["ideal_max"] < work_days <= params["bonus_tier1_max"]:
+        # 工作量分析 - v2.3版本逻辑
+        standard_days = params["standard_days"]  # 10人天
+        if work_days < standard_days:
+            explanation.append(f"📉 工作量{work_days:.1f}人天不足(标准{standard_days}人天)")
+        elif work_days == standard_days:
+            explanation.append(f"✅ 工作量{work_days:.1f}人天标准")
+        elif standard_days < work_days <= params["bonus_tier1_max"]:
             explanation.append(f"💪 工作量{work_days:.1f}人天优秀")
         else:
             if work_days > params["inflation_threshold"]:
@@ -646,7 +665,7 @@ class DataProcessor:
         stats = self.analyze_statistics(df)
 
         print("\n" + "="*60)
-        print("           研发团队效能评分分析报告 (优化版v2.1)")
+        print("           研发团队效能评分分析报告 (优化版v2.3)")
         print("="*60)
 
         print(f"\n📊 基础统计:")
@@ -715,7 +734,7 @@ class DataProcessor:
 def main():
     import os
 
-    parser = argparse.ArgumentParser(description="研发团队数据处理和评分计算器 - 优化版v2.1")
+    parser = argparse.ArgumentParser(description="研发团队数据处理和评分计算器 - 优化版v2.3")
     parser.add_argument("--overdue", help="逾期比例数据文件路径 (默认: data/overdue.data)")
     parser.add_argument("--mean-overdue", help="逾期天数均值数据文件路径 (默认: data/mean_overdue.data)")
     parser.add_argument("--days", help="工作人天数据文件路径 (默认: data/days.data)")
@@ -745,15 +764,15 @@ def main():
 
         # 处理文件
         print("正在处理数据文件...")
-        print("📌 使用优化版v2.1评分方案（人天越多越好）：")
+        print("📌 使用优化版v2.3评分方案（10人天标准，递增惩罚）：")
         print("   • 权重：逾期比例40% + 逾期天数40% + 工作人天20%")
         print("   • 逾期比例基准：20%，超出每1%扣2分")
         print("   • 逾期天数基准：2天，超出每天扣15分")
         print("   • 工作人天评分：")
-        print("     - 8-10人天：满分100分")
+        print("     - 10人天：满分100分（唯一标准）")
         print("     - 10-15人天：加分区间，每增加1人天+2分，最高110分")
         print("     - >15人天：继续加分每人天+1分，最高120分，但需核实记录")
-        print("     - <8人天：减分，每少1人天-10分")
+        print("     - <10人天：递增惩罚，距离标准越远惩罚越重")
         print()
 
         result_df = processor.process_files(overdue_file, mean_overdue_file, days_file)
