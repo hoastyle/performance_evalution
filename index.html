@@ -496,6 +496,305 @@
             margin-left: 8px;
         }
 
+        /* Lowlight需关注 - 优化样式 */
+        .lowlight-alert {
+            background: linear-gradient(135deg, #fff5f5 0%, #ffe6e6 100%);
+            border: 2px solid #e74c3c;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: 0 4px 12px rgba(231, 76, 60, 0.15);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .lowlight-alert::before {
+            content: '⚠️';
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            font-size: 60px;
+            opacity: 0.1;
+            transform: rotate(15deg);
+        }
+
+        .lowlight-alert.critical {
+            background: linear-gradient(135deg, #ff0000 0%, #cc0000 100%);
+            color: white;
+            animation: pulse-alert 2s infinite;
+        }
+
+        @keyframes pulse-alert {
+            0% { box-shadow: 0 4px 12px rgba(231, 76, 60, 0.15); }
+            50% { box-shadow: 0 4px 20px rgba(231, 76, 60, 0.4); }
+            100% { box-shadow: 0 4px 12px rgba(231, 76, 60, 0.15); }
+        }
+
+        .lowlight-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid rgba(231, 76, 60, 0.2);
+        }
+
+        .lowlight-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #e74c3c;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .lowlight-alert.critical .lowlight-title {
+            color: white;
+        }
+
+        .lowlight-urgency {
+            background: #e74c3c;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 500;
+        }
+
+        .lowlight-content {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 16px;
+            align-items: start;
+        }
+
+        .lowlight-info {
+            flex: 1;
+        }
+
+        .lowlight-employee {
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+
+        .lowlight-score {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 8px;
+        }
+
+        .lowlight-alert.critical .lowlight-score {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .lowlight-actions {
+            background: rgba(231, 76, 60, 0.1);
+            border-radius: 8px;
+            padding: 8px 12px;
+        }
+
+        .lowlight-alert.critical .lowlight-actions {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .lowlight-action-title {
+            font-size: 11px;
+            font-weight: 600;
+            margin-bottom: 4px;
+            color: #e74c3c;
+        }
+
+        .lowlight-alert.critical .lowlight-action-title {
+            color: white;
+        }
+
+        .lowlight-action-steps {
+            font-size: 10px;
+            line-height: 1.4;
+            color: #555;
+        }
+
+        .lowlight-alert.critical .lowlight-action-steps {
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        /* 工作人天核实提醒 - 优化样式 */
+        .workday-alert {
+            background: linear-gradient(135deg, #fff9e6 0%, #fff3cc 100%);
+            border: 2px solid #f39c12;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: 0 4px 12px rgba(243, 156, 18, 0.15);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .workday-alert::before {
+            content: '🔍';
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            font-size: 60px;
+            opacity: 0.1;
+            transform: rotate(15deg);
+        }
+
+        .workday-alert.high-severity {
+            background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+            color: white;
+            border-color: #ff6b35;
+        }
+
+        .workday-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid rgba(243, 156, 18, 0.2);
+        }
+
+        .workday-alert.high-severity .workday-header {
+            border-bottom-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .workday-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #f39c12;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .workday-alert.high-severity .workday-title {
+            color: white;
+        }
+
+        .workday-severity {
+            background: #f39c12;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 500;
+        }
+
+        .workday-alert.high-severity .workday-severity {
+            background: #ff6b35;
+        }
+
+        .workday-content {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 16px;
+            align-items: start;
+        }
+
+        .workday-info {
+            flex: 1;
+        }
+
+        .workday-employee {
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+
+        .workday-details {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 8px;
+        }
+
+        .workday-alert.high-severity .workday-details {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .workday-actions {
+            background: rgba(243, 156, 18, 0.1);
+            border-radius: 8px;
+            padding: 8px 12px;
+        }
+
+        .workday-alert.high-severity .workday-actions {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .workday-action-title {
+            font-size: 11px;
+            font-weight: 600;
+            margin-bottom: 4px;
+            color: #f39c12;
+        }
+
+        .workday-alert.high-severity .workday-action-title {
+            color: white;
+        }
+
+        .workday-action-steps {
+            font-size: 10px;
+            line-height: 1.4;
+            color: #555;
+        }
+
+        .workday-alert.high-severity .workday-action-steps {
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        /* 关键问题提醒横幅 */
+        .critical-alerts-banner {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+            color: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 15px rgba(238, 90, 82, 0.3);
+            border: 2px solid #ff4757;
+        }
+
+        .banner-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+
+        .banner-title {
+            font-size: 18px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .banner-stats {
+            display: flex;
+            gap: 15px;
+            font-size: 14px;
+        }
+
+        .banner-stat {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-weight: 500;
+        }
+
+        .banner-content {
+            font-size: 14px;
+            line-height: 1.5;
+            opacity: 0.95;
+        }
+
+        .banner-actions {
+            margin-top: 12px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
         .stat-tag.good {
             background: #d4edda;
             color: #155724;
@@ -1031,6 +1330,10 @@
             <div class="analysis-report" id="analysis-report" style="display: none;">
                 <div class="report-header">
                     <h1>研发团队效能评分分析报告 (优化版v2.3)</h1>
+                </div>
+
+                <!-- 关键问题提醒横幅 -->
+                <div id="critical-alerts-banner" style="display: none;">
                 </div>
 
                 <!-- 基础统计 -->
@@ -1912,33 +2215,117 @@
             `).join('');
             document.getElementById('highlight-employees').innerHTML = highlightHtml || '<p>暂无Highlight候选</p>';
 
-            // 更新Lowlight需关注 (D级)
+            // 更新Lowlight需关注 (D级) - 优化显示
             const lowlightEmployees = results.filter(r => r.grade === 'D' && r.comprehensive_score < 40);
-            const lowlightHtml = lowlightEmployees.map(emp => `
-                <div class="employee-card">
-                    <div class="employee-header">
-                        <span class="employee-name">${emp.name}</span>
-                        <span class="employee-score">${emp.comprehensive_score.toFixed(2)}分</span>
+            const lowlightHtml = lowlightEmployees.map(emp => {
+                const isCritical = emp.comprehensive_score < 20; // 极低分数为严重级别
+                const urgencyLevel = emp.comprehensive_score < 20 ? '严重' : '关注';
+                const alertClass = isCritical ? 'critical' : '';
+
+                return `
+                <div class="lowlight-alert ${alertClass}">
+                    <div class="lowlight-header">
+                        <div class="lowlight-title">
+                            <span>⚠️</span>
+                            <span>Lowlight需关注</span>
+                        </div>
+                        <div class="lowlight-urgency">${urgencyLevel}级别</div>
                     </div>
-                    <div class="employee-details">${emp.explanation}</div>
+                    <div class="lowlight-content">
+                        <div class="lowlight-info">
+                            <div class="lowlight-employee">${emp.name}</div>
+                            <div class="lowlight-score">综合得分: ${emp.comprehensive_score.toFixed(2)}分 (D级)</div>
+                            <div class="lowlight-score">${emp.explanation}</div>
+                        </div>
+                        <div class="lowlight-actions">
+                            <div class="lowlight-action-title">🎯 改进建议</div>
+                            <div class="lowlight-action-steps">
+                                ${isCritical ?
+                                    '1. 立即进行一对一绩效沟通<br>2. 制定明确的改进计划<br>3. 每日跟进进展情况<br>4. 考虑调整工作分配<br>5. 提供必要的培训支持' :
+                                    '1. 安排绩效面谈了解情况<br>2. 分析逾期原因和障碍<br>3. 制定合理的改进目标<br>4. 加强过程监控和指导<br>5. 定期回顾改进效果'
+                                }
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            `).join('');
+            `;}).join('');
             document.getElementById('lowlight-employees').innerHTML = lowlightHtml || '<p>暂无Lowlight需关注</p>';
 
-            // 更新需核实人天记录 (>15人天)
+            // 更新需核实人天记录 (>15人天) - 优化显示
             const reviewEmployees = results.filter(r => r.work_days > 15);
-            const reviewHtml = reviewEmployees.map(emp => `
-                <div class="employee-card">
-                    <div class="employee-header">
-                        <span class="employee-name">${emp.name}</span>
-                        <span class="employee-score">${emp.comprehensive_score.toFixed(2)}分</span>
+            const reviewHtml = reviewEmployees.map(emp => {
+                const isHighSeverity = emp.work_days > 25; // 超高人天为高级别
+                const severityLevel = emp.work_days > 25 ? '高级' : '中级';
+                const alertClass = isHighSeverity ? 'high-severity' : '';
+
+                return `
+                <div class="workday-alert ${alertClass}">
+                    <div class="workday-header">
+                        <div class="workday-title">
+                            <span>🔍</span>
+                            <span>需核实人天记录</span>
+                        </div>
+                        <div class="workday-severity">${severityLevel}优先级</div>
                     </div>
-                    <div class="employee-details">
-                        ${emp.work_days.toFixed(1)}人天 - 建议核实：是否存在人天记录膨胀或重复统计
+                    <div class="workday-content">
+                        <div class="workday-info">
+                            <div class="workday-employee">${emp.name}</div>
+                            <div class="workday-details">工作人天: ${emp.work_days.toFixed(1)}天 (综合得分: ${emp.comprehensive_score.toFixed(2)}分)</div>
+                            <div class="workday-details">
+                                ${isHighSeverity ?
+                                    '⚠️ 人天记录异常偏高，可能存在以下问题：<br>• 工作量估算不准确<br>• 重复统计或记录错误<br>• 任务分解过细导致计数偏差<br>• 可能存在效率问题' :
+                                    '⚠️ 人天记录偏高，建议核实以下方面：<br>• 工作量记录是否准确<br>• 是否存在重复统计<br>• 任务估算是否合理<br>• 工作效率是否需要优化'
+                                }
+                            </div>
+                        </div>
+                        <div class="workday-actions">
+                            <div class="workday-action-title">📋 核实清单</div>
+                            <div class="workday-action-steps">
+                                ${isHighSeverity ?
+                                    '1. 立即核查原始记录数据<br>2. 确认无重复统计情况<br>3. 重新评估任务工作量<br>4. 检查工作记录流程<br>5. 必要时调整历史数据' :
+                                    '1. 核对工作记录原始数据<br>2. 确认无重复统计问题<br>3. 评估工作量估算合理性<br>4. 检查工作记录完整性<br>5. 优化工作记录流程'
+                                }
+                            </div>
+                        </div>
                     </div>
                 </div>
-            `).join('');
+            `;}).join('');
             document.getElementById('review-employees').innerHTML = reviewHtml || '<p>暂无需核实的人天记录</p>';
+
+            // 更新关键问题提醒横幅
+            const criticalLowlightCount = results.filter(r => r.grade === 'D' && r.comprehensive_score < 20).length;
+            const highWorkdayCount = results.filter(r => r.work_days > 25).length;
+            const totalCriticalIssues = criticalLowlightCount + highWorkdayCount;
+
+            if (totalCriticalIssues > 0) {
+                const bannerHtml = `
+                <div class="critical-alerts-banner">
+                    <div class="banner-header">
+                        <div class="banner-title">
+                            <span>🚨</span>
+                            <span>关键问题提醒</span>
+                        </div>
+                        <div class="banner-stats">
+                            <div class="banner-stat">严重低绩效: ${criticalLowlightCount}人</div>
+                            <div class="banner-stat">超高人天: ${highWorkdayCount}人</div>
+                            <div class="banner-stat">总计: ${totalCriticalIssues}项</div>
+                        </div>
+                    </div>
+                    <div class="banner-content">
+                        ${criticalLowlightCount > 0 ? `• ${criticalLowlightCount}名员工综合得分低于20分，需要立即关注和干预<br>` : ''}
+                        ${highWorkdayCount > 0 ? `• ${highWorkdayCount}名员工工作人天超过25天，建议核实数据记录准确性<br>` : ''}
+                        这些问题可能影响团队整体效能和项目交付质量，建议优先处理。
+                    </div>
+                    <div class="banner-actions">
+                        📋 建议立即查看下方的"Lowlight需关注"和"需核实人天记录"部分，按照建议步骤进行处理
+                    </div>
+                </div>
+                `;
+                document.getElementById('critical-alerts-banner').innerHTML = bannerHtml;
+                document.getElementById('critical-alerts-banner').style.display = 'block';
+            } else {
+                document.getElementById('critical-alerts-banner').style.display = 'none';
+            }
 
             // 更新团队改进建议
             const suggestions = generateActionableSuggestions(results, {

@@ -789,6 +789,9 @@ def main():
 
         # 显示结果
         print(f"\n=== 评分结果 (共{len(result_df)}人) ===")
+        print("📊 综合得分计算公式：逾期比例得分×40% + 逾期天数得分×40% + 工作人天得分×20%")
+        print("📋 下表显示各项得分明细，帮助理解等级评定依据")
+        print()
 
         # 格式化输出
         display_df = result_df.copy()
@@ -796,13 +799,20 @@ def main():
         display_df["overdue_days"] = display_df["overdue_days"].apply(lambda x: f"{x:.1f}天")
         display_df["work_days"] = display_df["work_days"].apply(lambda x: f"{x:.1f}人天")
 
+        # 添加各项得分显示（用户要求看到grade如何计算得出）
+        display_df["逾期比例得分"] = display_df["overdue_ratio_score"].apply(lambda x: f"{x:.1f}")
+        display_df["逾期天数得分"] = display_df["overdue_days_score"].apply(lambda x: f"{x:.1f}")
+        display_df["工作人天得分"] = display_df["work_days_score"].apply(lambda x: f"{x:.1f}")
+
         # 选择要显示的列
         if args.explain:
             display_columns = ["name", "overdue_ratio", "overdue_days", "work_days",
+                             "逾期比例得分", "逾期天数得分", "工作人天得分",
                              "comprehensive_score", "grade", "explanation"]
             print(display_df[display_columns].to_string(index=True, index_names=["排名"]))
         else:
             display_columns = ["name", "overdue_ratio", "overdue_days", "work_days",
+                             "逾期比例得分", "逾期天数得分", "工作人天得分",
                              "comprehensive_score", "grade"]
             print(display_df[display_columns].to_string(index=True, index_names=["排名"]))
 
@@ -837,17 +847,26 @@ def main():
             result_df.to_csv(args.output, index=True, index_label="排名", encoding='utf-8-sig')
             print(f"\n结果已保存到: {args.output}")
 
-        # 显示前3名和后3名
+        # 显示前3名和后3名 - 增强显示各项得分
         print(f"\n=== Top 3 (优秀表现) ===")
         top3 = result_df.head(3)
         for idx, row in top3.iterrows():
             review_flag = " 🔍需核实" if row['needs_review'] else ""
             print(f"{idx}. {row['name']} - {row['comprehensive_score']}分 ({row['grade']}级){review_flag}")
+            print(f"     逾期比例: {row['overdue_ratio_score']:.1f}分 | 逾期天数: {row['overdue_days_score']:.1f}分 | 工作人天: {row['work_days_score']:.1f}分")
 
         print(f"\n=== Bottom 3 (需要改进) ===")
         bottom3 = result_df.tail(3)
         for idx, row in bottom3.iterrows():
             print(f"{idx}. {row['name']} - {row['comprehensive_score']}分 ({row['grade']}级)")
+            print(f"     逾期比例: {row['overdue_ratio_score']:.1f}分 | 逾期天数: {row['overdue_days_score']:.1f}分 | 工作人天: {row['work_days_score']:.1f}分")
+            # 为Bottom 3添加简短改进建议
+            if row['overdue_ratio_score'] < 60:
+                print(f"     💡 建议: 重点关注逾期比例改善")
+            if row['overdue_days_score'] < 60:
+                print(f"     💡 建议: 加强进度管理，减少逾期天数")
+            if row['work_days_score'] < 60:
+                print(f"     💡 建议: 优化工作分配，提升工作饱和度")
 
     except FileNotFoundError as e:
         print(f"❌ 文件未找到: {e}")
