@@ -264,7 +264,7 @@ class ScoringCalculator:
     def calculate_comprehensive_score(self, overdue_ratio: float,
                                     overdue_days: float,
                                     work_days: float) -> Dict[str, float]:
-        """计算综合得分"""
+        """计算综合得分 - v2.3.2版本（修复请假员工评分问题）"""
 
         # 计算各项得分
         ratio_score = self.calculate_overdue_ratio_score(overdue_ratio)
@@ -279,11 +279,26 @@ class ScoringCalculator:
             work_days_score * weights["work_days"]
         )
 
+        # v2.3.2修复：处理请假员工评分问题
+        # 当工作人天极低（<=1人天）时，应用额外惩罚
+        # 因为此时逾期指标的满分没有实际意义
+        if work_days <= 1.0:
+            # 请假或无工作状态：大幅降低综合得分
+            # 逾期表现不应奖励，因为根本没工作
+            penalty_factor = 0.3  # 保留30%的分数
+            comprehensive_score = comprehensive_score * penalty_factor
+
+        elif work_days <= 3.0:
+            # 极低工作量：适度降低综合得分
+            penalty_factor = 0.6  # 保留60%的分数
+            comprehensive_score = comprehensive_score * penalty_factor
+
         return {
             "overdue_ratio_score": round(ratio_score, 2),
             "overdue_days_score": round(days_score, 2),
             "work_days_score": round(work_days_score, 2),
-            "comprehensive_score": round(comprehensive_score, 2)
+            "comprehensive_score": round(comprehensive_score, 2),
+            "leave_adjustment": work_days <= 3.0  # 标记是否应用了请假调整
         }
 
     def get_grade(self, score: float) -> str:
@@ -303,7 +318,7 @@ class ScoringCalculator:
 
     def explain_score(self, overdue_ratio: float, overdue_days: float,
                      work_days: float) -> str:
-        """解释评分详情"""
+        """解释评分详情 - v2.3.2版本（包含请假调整说明）"""
         scores = self.calculate_comprehensive_score(overdue_ratio, overdue_days, work_days)
         params = self.config.work_days_params
 
@@ -321,9 +336,16 @@ class ScoringCalculator:
         else:
             explanation.append(f"⚠️ 逾期天数{overdue_days:.1f}天超出基准(2天)")
 
-        # 工作量分析 - v2.3版本逻辑
+        # 工作量分析 - v2.3.2版本逻辑
         standard_days = params["standard_days"]  # 10人天
-        if work_days < standard_days:
+        if work_days <= 1.0:
+            # v2.3.2修复：请假状态特殊处理
+            explanation.append(f"🏠 请假状态{work_days:.1f}人天（评分已调整）")
+            explanation.append(f"⚠️ 逾期指标满分因无工作而不计入奖励")
+        elif work_days <= 3.0:
+            # v2.3.2修复：极低工作量特殊处理
+            explanation.append(f"📉 极低工作量{work_days:.1f}人天（评分已调整）")
+        elif work_days < standard_days:
             explanation.append(f"📉 工作量{work_days:.1f}人天不足(标准{standard_days}人天)")
         elif work_days == standard_days:
             explanation.append(f"✅ 工作量{work_days:.1f}人天标准")

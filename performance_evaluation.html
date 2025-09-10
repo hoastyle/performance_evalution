@@ -2096,11 +2096,22 @@
                 const workDaysScore = this.calculateWorkDaysScore(workDays);
 
                 const weights = this.config.weights;
-                const comprehensiveScore = (
+                let comprehensiveScore = (
                     ratioScore * weights.overdue_ratio +
                     daysScore * weights.overdue_days +
                     workDaysScore * weights.work_days
                 );
+
+                // v2.3.2修复：处理请假员工评分问题
+                if (workDays <= 1.0) {
+                    // 请假或无工作状态：大幅降低综合得分
+                    const penaltyFactor = 0.3; // 保留30%的分数
+                    comprehensiveScore = comprehensiveScore * penaltyFactor;
+                } else if (workDays <= 3.0) {
+                    // 极低工作量：适度降低综合得分
+                    const penaltyFactor = 0.6; // 保留60%的分数
+                    comprehensiveScore = comprehensiveScore * penaltyFactor;
+                }
 
                 return {
                     overdue_ratio_score: Math.round(ratioScore * 100) / 100,
@@ -2136,7 +2147,13 @@
                 }
 
                 const standardDays = params.standard_days;
-                if (workDays < standardDays) {
+
+                // v2.3.2修复：添加请假状态说明
+                if (workDays <= 1.0) {
+                    explanation.push(`🚨 请假/无工作状态：工作量${workDays.toFixed(1)}人天，综合评分按30%计算`);
+                } else if (workDays <= 3.0) {
+                    explanation.push(`⚠️ 极低工作量：工作量${workDays.toFixed(1)}人天，综合评分按60%计算`);
+                } else if (workDays < standardDays) {
                     explanation.push(`📉 工作量${workDays.toFixed(1)}人天不足(标准${standardDays}人天)`);
                 } else if (workDays === standardDays) {
                     explanation.push(`✅ 工作量${workDays.toFixed(1)}人天标准`);
