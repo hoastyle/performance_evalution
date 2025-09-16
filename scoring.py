@@ -141,14 +141,14 @@ class DataParser:
 
     @staticmethod
     def parse_days_data(file_path: str) -> Dict[str, float]:
-        """解析工作人天数据文件"""
+        """解析工作人天数据文件 - v2.4简化格式"""
         data = {}
         with open(file_path, 'r', encoding='utf-8') as f:
             lines = [line.strip() for line in f.readlines() if line.strip()]
 
-        # 每5行为一组：姓名、实际工时（人天）、估分、实际工时中位数、估分中位数
-        for i in range(0, len(lines), 5):
-            if i + 4 < len(lines):
+        # 每3行为一组：姓名、实际工时（人天）、工时中位数
+        for i in range(0, len(lines), 3):
+            if i + 2 < len(lines):
                 name = lines[i]
                 work_days = float(lines[i + 1])  # 直接使用人天数据
                 data[name] = work_days

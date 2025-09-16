@@ -79,13 +79,11 @@ Days (float)
 Median Value
 ```
 
-**days.data**: Groups of 5 lines per employee
+**days.data**: Groups of 3 lines per employee
 ```
 Employee Name
 Work Days (float)
-Estimated Score
 Work Days Median
-Estimated Score Median
 ```
 
 ## Configuration Management

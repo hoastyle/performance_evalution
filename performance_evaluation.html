@@ -1921,8 +1921,9 @@
 
                 console.log('Days data lines:', lines.length);
 
-                for (let i = 0; i < lines.length; i += 5) {
-                    if (i + 4 < lines.length) {
+                // 每3行为一组：姓名、实际工时、工时中位数
+                for (let i = 0; i < lines.length; i += 3) {
+                    if (i + 2 < lines.length) {
                         const name = lines[i].trim();
                         const workDays = parseFloat(lines[i + 1].trim());
                         if (!isNaN(workDays) && name) {
